@@ -39,6 +39,15 @@ Autonomous-driving scenes are challenging for monocular SLAM because of low-text
 
 `semantic SLAM`, `visual SLAM`, `bird's-eye view`, `BEV`, `fisheye camera`, `autonomous driving`, `visual localization`, `pose graph optimization`, `bundle adjustment`
 
+## Related publication
+
+This repository contains experimental code related to the ideas in the following paper:
+
+- **Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**  
+  IEEE: https://ieeexplore.ieee.org/document/9613790/
+
+The code should be treated as a **research prototype / partial implementation**, not as an official or complete reproduction of the paper.
+
 ## Project status
 
 This is a research prototype. It may require dependency and dataset-path adaptation before being used in a modern environment.
@@ -54,3 +63,12 @@ This is a research prototype. It may require dependency and dataset-path adaptat
 ## 关键词
 
 语义 SLAM、视觉 SLAM、BEV、鸟瞰图、鱼眼相机、自动驾驶定位、位姿图优化、Bundle Adjustment。
+
+## 相关论文
+
+该仓库包含与以下论文思想相关的实验代码：
+
+- **Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**  
+  IEEE: https://ieeexplore.ieee.org/document/9613790/
+
+需要注意：该仓库更适合作为**研究原型 / 部分实现**来看待，不应理解为论文的官方完整复现。
