@@ -12,6 +12,7 @@
 ## Contents
 
 - [Overview](#english)
+- [Visual overview](#visual-overview)
 - [Repository structure](#repository-structure)
 - [Related publication](#related-publication)
 - [Citation](#citation)
@@ -41,6 +42,12 @@ Autonomous-driving scenes are challenging for monocular SLAM because of low-text
 - Motion-prior assisted matching in driving scenes.
 - Re-localization / re-initialization logic for tracking failure cases.
 - ORB-SLAM-style architecture with pose-graph and bundle-adjustment components.
+
+## Visual overview
+
+<p align="center">
+  <img src="assets/overview.svg" width="820" alt="Dual view semantic SLAM overview diagram" />
+</p>
 
 ## Repository structure
 
