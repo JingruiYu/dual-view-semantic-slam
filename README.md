@@ -13,6 +13,7 @@
 
 - [Overview](#english)
 - [Visual overview](#visual-overview)
+- [Example visual assets](#example-visual-assets)
 - [Repository structure](#repository-structure)
 - [Related publication](#related-publication)
 - [Citation](#citation)
@@ -48,6 +49,15 @@ Autonomous-driving scenes are challenging for monocular SLAM because of low-text
 <p align="center">
   <img src="assets/overview.svg" width="820" alt="Dual view semantic SLAM overview diagram" />
 </p>
+
+## Example visual assets
+
+<p align="center">
+  <img src="Examples/Monocular/mask_new_front.png" width="420" alt="Front-view mask asset" />
+  <img src="Examples/Monocular/view_mask.jpg" width="260" alt="View mask asset" />
+</p>
+
+The repository includes example mask assets used by the monocular / semantic SLAM pipeline. They are useful for understanding how view constraints and semantic masks are represented in the project.
 
 ## Repository structure
 
