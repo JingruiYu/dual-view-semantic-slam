@@ -1,6 +1,23 @@
 # Dual-View Semantic SLAM
 
+<p align="center">
+  <img src="https://img.shields.io/badge/language-C++-blue" />
+  <img src="https://img.shields.io/badge/topic-semantic--SLAM-orange" />
+  <img src="https://img.shields.io/badge/topic-BEV-lightgrey" />
+  <img src="https://img.shields.io/badge/license-GPL--3.0-green" />
+</p>
+
 [中文](#中文说明) | [English](#english)
+
+## Contents
+
+- [Overview](#english)
+- [Repository structure](#repository-structure)
+- [Related publication](#related-publication)
+- [Citation](#citation)
+- [License](#license)
+- [中文说明](#中文说明)
+
 
 ## English
 
@@ -51,6 +68,15 @@ The code should be treated as a **research prototype / partial implementation**,
 
 This is a research prototype. It may require dependency and dataset-path adaptation before being used in a modern environment.
 
+
+## Citation
+
+If you use this repository, please cite or acknowledge it using the metadata in [`CITATION.cff`](CITATION.cff).
+
+## License
+
+This repository is released under the [GNU General Public License v3.0](LICENSE), unless otherwise stated. Third-party components remain under their original licenses.
+
 ---
 
 ## 中文说明
@@ -70,3 +96,7 @@ This is a research prototype. It may require dependency and dataset-path adaptat
 - [**Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**](https://ieeexplore.ieee.org/document/9613790/)
 
 需要注意：该仓库更适合作为**研究原型 / 部分实现**来看待，不应理解为论文的官方完整复现。
+
+## 引用与许可
+
+如果你使用该仓库，请通过 [`CITATION.cff`](CITATION.cff) 引用或致谢该项目。许可协议见 [`LICENSE`](LICENSE)。

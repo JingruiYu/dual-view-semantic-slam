@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "Dual-View Semantic SLAM"
+message: "If you use this repository, please cite or acknowledge this repository and any related publication listed in the README."
+type: software
+authors:
+  - family-names: Yu
+    given-names: Jingrui
+repository-code: "https://github.com/JingruiYu/dual-view-semantic-slam"
+date-released: "2026-06-14"
+license: "GPL-3.0"
