@@ -43,8 +43,7 @@ Autonomous-driving scenes are challenging for monocular SLAM because of low-text
 
 This repository contains experimental code related to the ideas in the following paper:
 
-- **Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**  
-  IEEE: https://ieeexplore.ieee.org/document/9613790/
+- [**Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**](https://ieeexplore.ieee.org/document/9613790/)
 
 The code should be treated as a **research prototype / partial implementation**, not as an official or complete reproduction of the paper.
 
@@ -68,7 +67,6 @@ This is a research prototype. It may require dependency and dataset-path adaptat
 
 该仓库包含与以下论文思想相关的实验代码：
 
-- **Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**  
-  IEEE: https://ieeexplore.ieee.org/document/9613790/
+- [**Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**](https://ieeexplore.ieee.org/document/9613790/)
 
 需要注意：该仓库更适合作为**研究原型 / 部分实现**来看待，不应理解为论文的官方完整复现。
