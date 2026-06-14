@@ -1,60 +1,56 @@
 # Dual-View Semantic SLAM
 
-A research prototype for visual SLAM that combines a **front-view fisheye camera** and a **bird's-eye-view representation** for autonomous-driving localization and mapping.
+[中文](#中文说明) | [English](#english)
 
-This repository records part of my PhD-stage work on AVP / autonomous-driving perception, where the core question was: how can semantic and geometric information from different camera views improve the robustness of visual localization?
+## English
+
+A visual SLAM research prototype that combines **front-view camera observations**, **bird's-eye-view geometry**, and **semantic cues** for autonomous-driving localization and mapping.
+
+The project explores how multi-view geometric information and semantic scene structure can improve visual localization robustness in road environments.
 
 ## Motivation
 
-Classical monocular SLAM can become fragile in autonomous-driving scenes because of:
+Autonomous-driving scenes are challenging for monocular SLAM because of low-texture road surfaces, dynamic objects, repetitive structures, and large viewpoint changes. A dual-view formulation can provide complementary constraints:
 
-- low-texture road regions;
-- dynamic objects;
-- large viewpoint changes;
-- narrow effective field of view;
-- accumulated drift in long sequences.
-
-This project explored whether a dual-view design can make tracking and mapping more robust by combining:
-
-- **front-view visual features** for image-level tracking;
-- **bird's-eye-view cues** for geometric consistency;
-- **semantic information** for more meaningful scene structure;
-- **pose-graph / bundle-adjustment optimization** for global consistency.
+- front-view image features for visual tracking;
+- bird's-eye-view structure for road-layout consistency;
+- semantic cues for more stable scene understanding;
+- optimization modules for trajectory and map consistency.
 
 ## Main ideas
 
-- Fuse front-view and bird's-eye-view observations in a SLAM pipeline.
-- Use semantic cues to improve feature selection and matching robustness.
-- Add motion priors to reduce lost matches in challenging driving sequences.
-- Support re-initialization strategies when tracking is lost.
-- Use pose-graph optimization and global bundle adjustment for map consistency.
-
-## Technical keywords
-
-- Visual SLAM
-- Semantic SLAM
-- Fisheye camera
-- Bird's-eye view
-- Autonomous driving
-- Pose graph optimization
-- Bundle adjustment
-- ORB-SLAM-style architecture
+- Dual-view SLAM pipeline with front-view and BEV observations.
+- Semantic feature usage for robust tracking and matching.
+- Motion-prior assisted matching in driving scenes.
+- Re-localization / re-initialization logic for tracking failure cases.
+- ORB-SLAM-style architecture with pose-graph and bundle-adjustment components.
 
 ## Repository structure
 
 ```text
 .
-├── Examples/                 # Example monocular / semantic SLAM entry points
+├── Examples/                 # Monocular and semantic SLAM entry points
 ├── Thirdparty/               # Third-party SLAM dependencies
 ├── CMakeLists.txt
 └── README.md
 ```
 
-## Notes
+## Keywords
 
-This is a historical research repository and may require environment adaptation before running on a modern system. I keep it public because it reflects a continuous line of work from classical SLAM and localization to today's robotics data infrastructure and embodied-AI perception systems.
+`semantic SLAM`, `visual SLAM`, `bird's-eye view`, `BEV`, `fisheye camera`, `autonomous driving`, `visual localization`, `pose graph optimization`, `bundle adjustment`
 
-For my more recent related work, see:
+## Project status
 
-- [pyCuSFM: CUDA-accelerated Structure-from-Motion](https://github.com/nvidia-isaac/pyCuSFM)
-- [NVIDIA Isaac Neural Reconstruction](https://docs.nvidia.com/nurec/robotics/neural_reconstruction_stereo.html)
+This is a research prototype. It may require dependency and dataset-path adaptation before being used in a modern environment.
+
+---
+
+## 中文说明
+
+这是一个面向自动驾驶场景的视觉 SLAM 研究原型，尝试融合 **前视图像观测**、**鸟瞰图 / BEV 几何信息** 和 **语义线索** 来提升定位与建图的鲁棒性。
+
+项目关注的问题是：在道路场景中，单目视觉 SLAM 容易受到低纹理、动态物体、重复结构和视角变化影响；如果引入 BEV 结构和语义信息，是否能够提供更稳定的几何约束。
+
+## 关键词
+
+语义 SLAM、视觉 SLAM、BEV、鸟瞰图、鱼眼相机、自动驾驶定位、位姿图优化、Bundle Adjustment。
