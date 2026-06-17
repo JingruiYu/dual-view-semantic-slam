@@ -1,11 +1,23 @@
+# Build outputs
 /build/
 /lib/
-*.txt
+Thirdparty/**/build/
+Examples/Monocular/mono_bird_sem
+Examples/Monocular/semanticDB
+
+# Local datasets and vocabulary files
 /Data/
-Examples/Monocular/semanticDB
-Examples/Monocular/semanticDB
-Examples/Monocular/semanticDB
 /Vocabulary/
+*.bag
+*.db
+
+# Runtime outputs
+KeyFrameTrajectory*.txt
+CameraTrajectory*.txt
 FrontWithMotionModel.jpg
 FrontWithRefKF.jpg
 FrontWithReInitiation.jpg
+
+# Editor / OS noise
+.vscode/
+.DS_Store

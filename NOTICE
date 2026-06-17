@@ -1,5 +1,6 @@
-DualViewSemanticSLAM
+Dual-View Semantic SLAM
 Copyright 2026 Jingrui Yu
 
 This repository is distributed under the GNU General Public License v3.0, unless otherwise stated.
-Third-party components, if any, remain under their original licenses.
+It contains research-prototype code derived from and/or related to ORB-SLAM2-style visual SLAM components.
+Third-party components under Thirdparty/ remain under their original licenses.

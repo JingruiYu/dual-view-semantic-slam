@@ -1,31 +1,34 @@
-echo "Configuring and building Thirdparty/DBoW2 ..."
+#!/usr/bin/env bash
+set -euo pipefail
 
-cd Thirdparty/DBoW2
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j
+repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+build_jobs="${BUILD_JOBS:-$(nproc 2>/dev/null || echo 4)}"
 
-cd ../../g2o
+build_cmake_project() {
+  local project_dir="$1"
+  local build_type="$2"
 
-echo "Configuring and building Thirdparty/g2o ..."
+  echo "Configuring and building ${project_dir} ..."
+  cmake -S "${repository_root}/${project_dir}" \
+        -B "${repository_root}/${project_dir}/build" \
+        -DCMAKE_BUILD_TYPE="${build_type}"
+  cmake --build "${repository_root}/${project_dir}/build" --parallel "${build_jobs}"
+}
 
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j
+build_cmake_project "Thirdparty/DBoW2" Release
+build_cmake_project "Thirdparty/g2o" Release
+build_cmake_project "." Release
 
-cd ../../../
+cat <<'MSG'
 
-echo "Uncompress vocabulary ..."
+Build finished.
 
-cd Vocabulary
-tar -xf ORBvoc.txt.tar.gz
-cd ..
+Main executable:
+  Examples/Monocular/mono_bird_sem
 
-echo "Configuring and building ORB_SLAM2 ..."
-
-mkdir build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-make -j4
+Example usage:
+  ./Examples/Monocular/mono_bird_sem \
+    path/to/ORBvoc.txt \
+    Examples/Monocular/fisheye.yaml \
+    path/to/sequence
+MSG

@@ -1,4 +1,4 @@
-#include "simple_birdseye_odometer.h"
+#include "SimpleBirdseyeOdometer.h"
 
 using namespace std;
 using namespace cv;

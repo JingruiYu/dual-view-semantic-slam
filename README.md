@@ -63,11 +63,48 @@ The repository includes example mask assets used by the monocular / semantic SLA
 
 ```text
 .
-├── Examples/                 # Monocular and semantic SLAM entry points
-├── Thirdparty/               # Third-party SLAM dependencies
+├── Examples/Monocular/       # Main example entry point and example mask assets
+├── include/                   # SLAM headers
+├── src/                       # SLAM implementation
+├── Thirdparty/                # Bundled DBoW2 and g2o dependencies
 ├── CMakeLists.txt
+├── build.sh
 └── README.md
 ```
+
+## Build and run
+
+This repository keeps one main example executable:
+
+```text
+Examples/Monocular/mono_bird_sem
+```
+
+Build the bundled third-party dependencies and the main project with:
+
+```bash
+./build.sh
+```
+
+The bird's-eye-view odometry module depends on `pclomp / ndt_omp`. If it is installed outside the default compiler search paths, pass the location through CMake cache variables, for example:
+
+```bash
+cmake -S . -B build \
+  -DPCL_OMP_INCLUDE_DIR=/path/to/ndt_omp/include \
+  -DPCL_OMP_LIBRARY=/path/to/libndt_omp.so
+cmake --build build
+```
+
+Example invocation:
+
+```bash
+./Examples/Monocular/mono_bird_sem \
+  path/to/ORBvoc.txt \
+  Examples/Monocular/fisheye.yaml \
+  path/to/sequence
+```
+
+The sequence directory is expected to provide the association / ground-truth text files and image paths used by `Examples/Monocular/mono_bird_sem.cc`. Local datasets and vocabulary files are intentionally not tracked in this repository.
 
 ## Keywords
 
@@ -92,7 +129,7 @@ If you use this repository, please cite or acknowledge it using the metadata in 
 
 ## License
 
-This repository is released under the [GNU General Public License v3.0](LICENSE), unless otherwise stated. Third-party components remain under their original licenses.
+This repository is released under the [GNU General Public License v3.0](LICENSE), unless otherwise stated. Third-party components remain under their original licenses. This repository includes ORB-SLAM2-style components and bundled DBoW2 / g2o code; please also check the license files in `Thirdparty/`.
 
 ---
 
@@ -102,17 +139,6 @@ This repository is released under the [GNU General Public License v3.0](LICENSE)
 
 项目关注的问题是：在道路场景中，单目视觉 SLAM 容易受到低纹理、动态物体、重复结构和视角变化影响；如果引入 BEV 结构和语义信息，是否能够提供更稳定的几何约束。
 
-## 关键词
-
-语义 SLAM、视觉 SLAM、BEV、鸟瞰图、鱼眼相机、自动驾驶定位、位姿图优化、Bundle Adjustment。
-
-## 相关论文
-
-该仓库包含与以下论文思想相关的实验代码：
-
-- [**Hierarchical Multi-Level Information Fusion for Robust and Consistent Visual SLAM**](https://ieeexplore.ieee.org/document/9613790/)
-
-需要注意：该仓库更适合作为**研究原型 / 部分实现**来看待，不应理解为论文的官方完整复现。
 
 ## 引用与许可
 

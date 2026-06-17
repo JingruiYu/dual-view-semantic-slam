@@ -1,4 +1,4 @@
-#include "edge_filter_ipm.h"
+#include "EdgeFilterIPM.h"
 
 namespace edge_filter {
 

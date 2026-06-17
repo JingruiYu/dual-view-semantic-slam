@@ -32,7 +32,7 @@
 
 #include"Optimizer.h"
 #include"PnPsolver.h"
-#include "simple_birdseye_odometer.h"
+#include "SimpleBirdseyeOdometer.h"
 
 #include<iostream>
 #include<fstream>

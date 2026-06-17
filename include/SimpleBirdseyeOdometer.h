@@ -10,7 +10,7 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pclomp/ndt_omp.h>
 
-#include "edge_filter_ipm.h"
+#include "EdgeFilterIPM.h"
 
 namespace birdseye_odometry {
 
