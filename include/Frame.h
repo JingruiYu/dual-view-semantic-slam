@@ -120,6 +120,8 @@ public:
     /********************* Modified Here *********************/
     cv::Mat GetGTPoseTwb();
     cv::Mat GetOdomPoseTwb();
+    static cv::Mat GetTransformFromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2);
+    int GetBirdMapPointsNum();
 
 public:
     // Vocabulary used for relocalization.
@@ -178,6 +180,7 @@ public:
     long unsigned int mnBirdviewRefFrameId;
     vector<int> mvnBirdviewMatches21;
     vector<bool> mvbBirdviewInliers;
+    std::vector<bool> mvBirdOutlier;
     vector<MapPointBird*> mvpMapPointsBird;
     KeyFrame *mpReferenceKFBird;
     //  feature grid
@@ -191,7 +194,12 @@ public:
     cv::Mat mImg;
     // birdview images
     cv::Mat mBirdviewImg;
+    cv::Mat mBirdColor;
     cv::Mat mBirdviewMask;
+    cv::Mat mBirdviewContour;
+    cv::Mat mBirdviewContourICP;
+    std::vector<cv::Point2f> mEdgeSign;
+    std::vector<cv::Point2f> mEdgeFree;
 
     // Corresponding stereo coordinate and depth for each keypoint.
     // "Monocular" keypoints have a negative value.
@@ -224,6 +232,8 @@ public:
 
     cv::Vec3d mGtPose;
     cv::Vec3d mOdomPose;
+    bool mbHaveOdom = false;
+    cv::Mat testTbw;
     // Camera pose.
     cv::Mat mTcw;
 
@@ -264,6 +274,9 @@ private:
 
     // Assign keypoints to the grid for speed up feature matching (called in the constructor).
     void AssignFeaturesToGrid();
+    void GuidenceKeyBirdPts(std::vector<cv::KeyPoint>& preKeysBird);
+    void genEdgesPC();
+    bool nearEdges(cv::KeyPoint keypoint);
 
     // Rotation, translation and camera center
     cv::Mat mRcw;

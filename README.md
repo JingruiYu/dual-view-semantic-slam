@@ -123,6 +123,16 @@ The code should be treated as a **research prototype / partial implementation**,
 This is a research prototype. It may require dependency and dataset-path adaptation before being used in a modern environment.
 
 
+## Fisheye-BEV variant
+
+The former `fisheye-bev-visual-slam` line has been consolidated into this repository. The migrated example entry point is:
+
+```text
+Examples/Monocular/mono_fisheye_bev.cc
+```
+
+It reuses the same dual-view SLAM core and builds as `mono_fisheye_bev`. The fisheye-BEV odometry / g2o helper code has been integrated into the normal `include/` and `src/` tree so that related tracking and optimization code lives beside the existing birdview implementation.
+
 ## Citation
 
 If you use this repository, please cite or acknowledge it using the metadata in [`CITATION.cff`](CITATION.cff).

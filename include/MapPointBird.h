@@ -31,6 +31,8 @@ public:
     void ComputeDistinctiveDescriptors();
     cv::Mat GetDescriptor();
     int Observations();
+    bool isBad();
+    KeyFrame* GetReferenceKeyFrame();
 
 public:
     long unsigned int mnId;
@@ -58,6 +60,12 @@ public:
 
     std::mutex mMutexPos;
     std::mutex mMutexFeatures;
+
+    bool mbBad;
+    long unsigned int mnCorrectedByKF;
+    long unsigned int mnCorrectedReference;
+    cv::Mat mPosGBA;
+    long unsigned int mnBAGlobalForKF;
 
 };
 

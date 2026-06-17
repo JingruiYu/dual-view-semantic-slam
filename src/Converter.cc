@@ -235,4 +235,65 @@ cv::Mat Converter::GetDeltaTransformFromOdometer(const cv::Vec3d &Pose1, const c
     return T12c.clone();
 }
 
+
+cv::Mat Converter::GetTbi2bi1FromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2)
+{
+    const double x1 = odomPose1[0];
+    const double y1 = odomPose1[1];
+    const double theta1 = odomPose1[2];
+    const double x2 = odomPose2[0];
+    const double y2 = odomPose2[1];
+    const double theta2 = odomPose2[2];
+
+    const double theta12 = theta2 - theta1;
+    const double x12 = (x2 - x1) * cos(theta1) + (y2 - y1) * sin(theta1);
+    const double y12 = (y2 - y1) * cos(theta1) - (x2 - x1) * sin(theta1);
+
+    cv::Mat T12b = (cv::Mat_<float>(4,4) << cos(theta12), -sin(theta12), 0, x12,
+                                             sin(theta12),  cos(theta12), 0, y12,
+                                             0,             0,            1, 0,
+                                             0,             0,            0, 1);
+    return T12b.clone();
+}
+
+cv::Mat Converter::GetTci1ci2FromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2)
+{
+    cv::Mat Tbi2bi1 = GetTbi2bi1FromOdometer(odomPose1, odomPose2);
+    cv::Mat Tci2ci1 = Frame::Tcb * Tbi2bi1 * Frame::Tbc;
+    return invT(Tci2ci1);
+}
+
+cv::Point3f Converter::BirdPixel2BaseXY(const cv::KeyPoint &keypoint)
+{
+    cv::Point3f point;
+    point.x = (Frame::birdviewRows / 2 - keypoint.pt.y) * Frame::pixel2meter + Frame::rear_axle_to_center;
+    point.y = (Frame::birdviewCols / 2 - keypoint.pt.x) * Frame::pixel2meter;
+    point.z = 0;
+    return point;
+}
+
+cv::Point3f Converter::BirdPixel2BaseXY(const cv::Point2f &imagePoint)
+{
+    cv::Point3f point;
+    point.x = (Frame::birdviewRows / 2 - imagePoint.y) * Frame::pixel2meter + Frame::rear_axle_to_center;
+    point.y = (Frame::birdviewCols / 2 - imagePoint.x) * Frame::pixel2meter;
+    point.z = 0;
+    return point;
+}
+
+cv::Point2f Converter::BaseXY2BirdPixel(const cv::Point3f &point)
+{
+    cv::Point2f imagePoint;
+    imagePoint.x = Frame::birdviewCols / 2 - point.y * Frame::meter2pixel;
+    imagePoint.y = Frame::birdviewRows / 2 - (point.x - Frame::rear_axle_to_center) * Frame::meter2pixel;
+    return imagePoint;
+}
+
+cv::Point3f Converter::BaseXY2CamXYZ(cv::Point3f point)
+{
+    cv::Mat source(point);
+    cv::Mat target = Frame::Tcb.rowRange(0,3).colRange(0,3) * source + Frame::Tcb.rowRange(0,3).col(3);
+    return cv::Point3f(target.at<float>(0), target.at<float>(1), target.at<float>(2));
+}
+
 } //namespace ORB_SLAM

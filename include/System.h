@@ -84,6 +84,8 @@ public:
     // Returns the camera pose (empty if tracking fails).
     cv::Mat TrackMonocularWithBirdview(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const double &timestamp);
     cv::Mat TrackMonocularWithBirdviewSem(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const cv::Mat &birdviewContour, const cv::Mat &birdviewContourICP, cv::Vec3d gtPose, cv::Vec3d odomPose, const double &timestamp);
+    cv::Mat TrackMonocularWithOdom(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const cv::Mat &birdviewContour,
+                                 const cv::Mat &birdviewContourICP, cv::Vec3d gtPose, cv::Vec3d odomPose, const double &timestamp);
 
     // This stops local mapping thread (map building) and performs only camera tracking.
     void ActivateLocalizationMode();
@@ -122,6 +124,7 @@ public:
 
     /********************* Modified Here *********************/
     void SaveKeyFrameTrajectoryOdomTUM(const string &filename);
+    void SaveKeyFrameIdx(const string &filename);
 
     // TODO: Save/Load functions
     // SaveMap(const string &filename);

@@ -45,6 +45,7 @@ set(PCL_OMP_LIBRARY "ndt_omp" CACHE STRING "pclomp / ndt_omp library name or abs
 include_directories(
   ${PROJECT_SOURCE_DIR}
   ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include/se3Types/Sophus
   ${EIGEN3_INCLUDE_DIR}
   ${Pangolin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
@@ -86,6 +87,10 @@ add_library(${PROJECT_NAME} SHARED
   src/OptimizerBirdview.cc
   src/EdgeFilterIPM.cc
   src/SimpleBirdseyeOdometer.cc
+  src/OdomG2oTypeSophus.cc
+  src/OdomG2oTypeQuat.cc
+  src/se3Types/Sophus/so3.cpp
+  src/se3Types/Sophus/se3.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -100,3 +105,6 @@ target_link_libraries(${PROJECT_NAME}
 
 add_executable(mono_bird_sem Examples/Monocular/mono_bird_sem.cc)
 target_link_libraries(mono_bird_sem ${PROJECT_NAME})
+
+add_executable(mono_fisheye_bev Examples/Monocular/mono_fisheye_bev.cc)
+target_link_libraries(mono_fisheye_bev ${PROJECT_NAME})

@@ -68,6 +68,8 @@ public:
     void EraseMapPointBird(MapPointBird* pMP);
     long unsigned int MapPointsBirdInMap();
     std::vector<MapPointBird*> GetAllMapPointsBird();
+    void UpdateLocalBirdMap();
+    std::vector<MapPointBird*> GetLocalMapPointsBird();
 
     vector<KeyFrame*> mvpKeyFrameOrigins;
 
@@ -75,6 +77,10 @@ public:
 
     // This avoid that two points are created simultaneously in separate threads (id conflict)
     std::mutex mMutexPointCreation;
+
+    std::list<KeyFrame*> localKFbird;
+    std::vector<MapPointBird*> localMapPointBirds;
+    cv::Mat curTw;
 
 protected:
     std::set<MapPoint*> mspMapPoints;

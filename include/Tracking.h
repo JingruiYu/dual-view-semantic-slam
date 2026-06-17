@@ -76,6 +76,9 @@ public:
     /********************* Modified Here *********************/
     cv::Mat GrabImageMonocularWithBirdview(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const double &timestamp);
     cv::Mat GrabImageMonocularWithBirdviewSem(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const cv::Mat &birdviewContour, const cv::Mat &birdviewContourICP, const double &timestamp, cv::Vec3d gtPose, cv::Vec3d odomPose);
+    cv::Mat GrabImageMonocularWithOdom(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask,
+                                       const cv::Mat &birdviewContour, const cv::Mat &birdviewContourICP,
+                                       const double &timestamp, cv::Vec3d odomPose, cv::Vec3d gtPose);
 
     void SetLocalMapper(LocalMapping* pLocalMapper);
     void SetLoopClosing(LoopClosing* pLoopClosing);
@@ -88,6 +91,9 @@ public:
 
     // Use this function if you have deactivated local mapping and you only want to localize the camera.
     void InformOnlyTracking(const bool &flag);
+    void DrawInTwb_ptr_(const cv::Mat &T, double r, double g, double b, string name);
+    void DrawTwb_cPose(const cv::Mat &Twb_c, double r, double g, double b, string name);
+    void DrawTwbPose(const cv::Mat &Twb, double r, double g, double b, string name);
 
 
 public:
@@ -136,6 +142,9 @@ public:
     std::vector<cv::Point3f> mvIniP3D;
     Frame mInitialFrame;
     Frame mReInitFrame;
+    Frame* tmpRefFrame = NULL;
+    std::vector<Frame*> tmpvFrame;
+    std::vector<cv::DMatch> vBirdDMatchs;
 
     // Lists used to recover the full camera trajectory at the end of the execution.
     // Basically we store the reference keyframe for each frame and its relative transformation
@@ -147,6 +156,9 @@ public:
     // True if local mapping is deactivated and we are performing only localization
     bool mbOnlyTracking;
     bool IsReInit;
+    bool IsbirdWithRefKF = false;
+    list<Frame*> localFrame;
+    std::vector<MapPointBird*> localMapPointBirds;
 
     /**************** Modify **********************/
     pcl::visualization::PCLVisualizer::Ptr Twc_ptr_;
@@ -166,6 +178,7 @@ public:
 protected:
 
     // Main tracking function. It is independent of the input sensor.
+    void TrackB();
     void Track();
 
     // Map initialization for stereo and RGB-D
@@ -184,6 +197,8 @@ protected:
     bool Relocalization();
     bool ReInitiation();
     bool ReInitialization();
+    void TrackUsingBird();
+    bool BirdNeedKF();
 
     void UpdateLocalMap();
     void UpdateLocalPoints();
@@ -194,6 +209,14 @@ protected:
 
     bool NeedNewKeyFrame();
     void CreateNewKeyFrame();
+    void GenerateBirdPoints();
+    void CreateBirdPoints(KeyFrame* pKF);
+    void FilterBirdOutlier(Frame* matchedFrame1, Frame* matchedFrame2, vector<cv::DMatch> &vDMatches12, float windowSize);
+    void FilterBirdOutlierInFront(Frame* matchedFrame1, Frame* matchedFrame2, vector<cv::DMatch> &vDMatches12, float windowSize);
+    void CheckOptim(Frame* pFrame);
+    void UpdateBirdLocalMap();
+    void GetPerFrameMatchedBirdPoints();
+    void GetLocalMapForBird();
 
     /********************* Modified Here *********************/
     void MatchAndRetriveBirdMP();

@@ -102,6 +102,7 @@ public:
     int SearchByMatchBird(Frame &CurrentFrame, const Frame &LastFrame, const int windowSize=10);
 
     int SearchByMatchBird(KeyFrame *pKF, Frame &F, std::vector<MapPointBird*> &vpMapPointMatchesBird, const float r=10);
+    int BirdMapPointMatch(Frame &CurF, const std::vector<MapPointBird*> &vRefMapPointsBird, int windowSize = 10, float filterSize = 0.05);
 
 
 public:

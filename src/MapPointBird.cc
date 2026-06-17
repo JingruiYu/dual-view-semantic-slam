@@ -167,4 +167,11 @@ int MapPointBird::Observations()
     return nObs;
 }
 
+
+KeyFrame* MapPointBird::GetReferenceKeyFrame()
+{
+    unique_lock<mutex> lock(mMutexFeatures);
+    return mpRefKF;
+}
+
 }  // namespace ORB_SLAM2

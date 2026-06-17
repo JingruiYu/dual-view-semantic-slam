@@ -25,6 +25,13 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include <unistd.h>
+
+bool bTightCouple=true;
+bool bTightCouple2=true;
+bool bLooseCouple=true;
+bool bFixScale=true;
+bool bHaveBird=true;
 
 namespace ORB_SLAM2
 {
@@ -653,6 +660,88 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
 {
     unique_lock<mutex> lock(mMutexState);
     return mTrackedKeyPointsUn;
+}
+
+
+cv::Mat System::TrackMonocularWithOdom(const cv::Mat &im, const cv::Mat &birdview, const cv::Mat &birdviewmask, const cv::Mat &birdviewContour, 
+                                    const cv::Mat &birdviewContourICP, cv::Vec3d gtPose, cv::Vec3d odomPose, const double &timestamp)
+{
+    if(mSensor!=MONOCULAR)
+    {
+        cerr << "ERROR: you called TrackMonocularWithOdom but input sensor was not set to Monocular." << endl;
+        exit(-1);
+    }
+
+    // Check mode change
+    {
+        unique_lock<mutex> lock(mMutexMode);
+        if(mbActivateLocalizationMode)
+        {
+            mpLocalMapper->RequestStop();
+
+            // Wait until Local Mapping has effectively stopped
+            while(!mpLocalMapper->isStopped())
+            {
+                usleep(1000);
+            }
+
+            mpTracker->InformOnlyTracking(true);
+            mbActivateLocalizationMode = false;
+        }
+        if(mbDeactivateLocalizationMode)
+        {
+            mpTracker->InformOnlyTracking(false);
+            mpLocalMapper->Release();
+            mbDeactivateLocalizationMode = false;
+        }
+    }
+
+    // Check reset
+    {
+        unique_lock<mutex> lock(mMutexReset);
+        if(mbReset)
+        {
+            mpTracker->Reset();
+            mbReset = false;
+        }
+    }
+
+    cv::Mat Tcw = mpTracker->GrabImageMonocularWithOdom(im,birdview,birdviewmask,birdviewContour,birdviewContourICP,timestamp,odomPose,gtPose);
+
+    unique_lock<mutex> lock2(mMutexState);
+    mTrackingState = mpTracker->mState;
+    mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
+    mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
+
+    return Tcw;
+}
+
+void System::SaveKeyFrameIdx(const string &filename)
+{
+    vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
+    sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
+
+    ofstream f;
+    f.open(filename.c_str());
+    if(!f)
+    {
+        cout<<"can't open file "<<filename<<endl;
+    }
+    if(!f)
+    {
+        cout<<"can't open file "<<filename<<endl;
+    }
+    f << fixed;
+
+    for(size_t i=0; i<vpKFs.size(); i++)
+    {
+        KeyFrame* pKF = vpKFs[i];
+
+        f << setprecision(6) << pKF->mnFrameId << endl;
+    }
+
+    f.close();
+    cout << endl << "KeyFrameIdx saved!" << endl;
 }
 
 } //namespace ORB_SLAM

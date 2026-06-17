@@ -47,6 +47,10 @@ public:
 
     // Draw last processed frame.
     cv::Mat DrawFrame();
+    cv::Mat DrawBird();
+    cv::Mat DrawBirdMask();
+    cv::Mat DrawBirdMatches();
+    cv::Mat DrawBirdSave();
 
 protected:
 
@@ -64,6 +68,15 @@ protected:
     int mState;
 
     Map* mpMap;
+
+    cv::Mat mBirdIm;
+    cv::Mat mBirdColor;
+    cv::Mat mBirdMask;
+    cv::Mat mICP;
+    vector<cv::KeyPoint> mvCurrentBirdKeys;
+    cv::Mat RefBirdIm;
+    vector<cv::KeyPoint> RefBirdKeys;
+    vector<cv::DMatch> vDMatches12;
 
     std::mutex mMutex;
 };

@@ -87,8 +87,10 @@ public:
     void EraseMapPointMatch(const size_t &idx);
     void EraseMapPointMatch(MapPoint* pMP);
     /********************* Modified Here *********************/
-    void EraseMapPointMatchBird(MapPointBird* pMP);
-    vector<MapPointBird*> GetMapPointMatchesBird();
+    void AddMapPointBird(MapPointBird* pMP, const size_t &idx);
+    void EraseMapPointBirdMatch(MapPointBird* pMP);
+    vector<MapPointBird*> GetMapPointBirdMatches();
+    MapPointBird* GetMapPointBird(const size_t &idx);
     void ReplaceMapPointMatch(const size_t &idx, MapPoint* pMP);
     std::set<MapPoint*> GetMapPoints();
     std::vector<MapPoint*> GetMapPointMatches();
@@ -121,10 +123,6 @@ public:
     static bool lId(KeyFrame* pKF1, KeyFrame* pKF2){
         return pKF1->mnId<pKF2->mnId;
     }
-
-    /********************* Modified Here *********************/
-    void AddMapPointBird(MapPointBird* pMP, const size_t &idx);
-
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
@@ -180,9 +178,11 @@ public:
     // bool mbBirdviewRefKF = false;
     // long unsigned int mnBirdviewRefKFId;
     std::vector<cv::Point3f> mvKeysBirdCamXYZ;
+    std::vector<cv::Point3f> mvKeysBirdBaseXY;
     std::vector<cv::KeyPoint> mvKeysBird;
     vector<int> mvnBirdviewMatches21;
     std::vector<MapPointBird*> mvpMapPointsBird;
+    std::vector<bool> mvBirdOutlier;
 
     //BoW
     DBoW2::BowVector mBowVec;
@@ -208,6 +208,8 @@ public:
 
     cv::Vec3d mGtPose;
     cv::Vec3d mOdomPose;
+    bool mbHaveOdom = false;
+    cv::Mat mBirdviewContourICP;
 
     cv::Mat mImg;
 
@@ -233,7 +235,9 @@ protected:
 
     std::map<KeyFrame*,int> mConnectedKeyFrameWeights;
     std::vector<KeyFrame*> mvpOrderedConnectedKeyFrames;
+    std::vector<KeyFrame*> mvpBirdConnectedKeyFrames;
     std::vector<int> mvOrderedWeights;
+    std::vector<int> mvBirdWeights;
 
     // Spanning Tree and Loop Edges
     bool mbFirstConnection;

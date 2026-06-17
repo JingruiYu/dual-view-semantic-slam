@@ -26,6 +26,8 @@
 
 #include<mutex>
 
+extern bool bHaveBird;
+
 namespace ORB_SLAM2
 {
 
@@ -198,6 +200,103 @@ void FrameDrawer::Update(Tracking *pTracker)
         }
     }
     mState=static_cast<int>(pTracker->mLastProcessedState);
+}
+
+
+cv::Mat FrameDrawer::DrawBird()
+{
+    cv::Mat imForDraw;
+    mBirdIm.copyTo(imForDraw);
+
+    const float r = 5;
+    
+    for (int i = 0; i < mvCurrentBirdKeys.size(); i++)
+    {
+        cv::Point2f pt1,pt2;
+        pt1.x=mvCurrentBirdKeys[i].pt.x-r;
+        pt1.y=mvCurrentBirdKeys[i].pt.y-r;
+        pt2.x=mvCurrentBirdKeys[i].pt.x+r;
+        pt2.y=mvCurrentBirdKeys[i].pt.y+r;
+
+        cv::rectangle(imForDraw,pt1,pt2,cv::Scalar(0,255,0));
+        cv::circle(imForDraw,mvCurrentBirdKeys[i].pt,2,cv::Scalar(0,255,0),-1);
+    }
+
+    // cout << "mvCurrentBirdKeys.size() : " << mvCurrentBirdKeys.size() << endl;
+    
+    return imForDraw;
+}
+
+cv::Mat FrameDrawer::DrawBirdMask()
+{
+    return mBirdMask;
+}
+
+cv::Mat FrameDrawer::DrawBirdMatches()
+{
+    cv::Mat matchesImg;
+    cv::drawMatches(RefBirdIm,RefBirdKeys,mBirdIm,mvCurrentBirdKeys,
+            vDMatches12,matchesImg,cv::Scalar::all(-1),cv::Scalar::all(-1),std::vector<char>(),cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+    
+    return matchesImg;
+}
+
+cv::Mat FrameDrawer::DrawBirdSave()
+{
+    cv::Mat imForSave;
+    imForSave = mBirdColor.clone();
+
+    for (size_t row = 0; row < mICP.rows; row++)
+    {
+        for (size_t col = 0; col < mICP.cols; col++)
+        {
+            int label = -1;
+
+            if (mICP.at<uchar>(row, col) < 10)
+                continue; // free
+            else if (mICP.at<uchar>(row, col) < 150)
+                label = 0; // edge
+            else
+                label = 1; // freespace
+            
+            cv::Point2f pt;
+            pt.x = col;
+            pt.y = row;
+
+            if (label == 1)
+            {
+                imForSave.at<cv::Vec3b>(row, col) = cv::Vec3b(0, 0, 200);
+            }
+            else
+            {
+                imForSave.at<cv::Vec3b>(row, col) = cv::Vec3b(0, 200, 0);
+            }
+            
+            // cv::circle(imForSave,pt,0.5,cv::Scalar(0,200,0),-1);
+        }
+    }  
+
+    const float r = 5;
+
+    // for (int i = 0; i < mvCurrentBirdKeys.size(); i++)
+    // {
+    //     // cv::Point2f pt1,pt2;
+    //     // pt1.x=mvCurrentBirdKeys[i].pt.x-r;
+    //     // pt1.y=mvCurrentBirdKeys[i].pt.y-r;
+    //     // pt2.x=mvCurrentBirdKeys[i].pt.x+r;
+    //     // pt2.y=mvCurrentBirdKeys[i].pt.y+r;
+            
+    //     // cv::rectangle(imForSave,pt1,pt2,cv::Scalar(0,255,0));
+    //     cv::circle(imForSave,mvCurrentBirdKeys[i].pt,2,cv::Scalar(0,200,200),-1);
+    // }
+
+    for (int j = 0; j < vDMatches12.size(); j++)
+    {
+        cv::DMatch subMatch = vDMatches12[j];
+        cv::circle(imForSave,mvCurrentBirdKeys[subMatch.trainIdx].pt,2,cv::Scalar(200,0,0),-1);
+    }
+
+    return imForSave;
 }
 
 } //namespace ORB_SLAM

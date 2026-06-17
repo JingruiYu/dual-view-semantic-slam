@@ -60,6 +60,12 @@ public:
     static cv::Mat Tcw2Twb_c(const cv::Mat &Tcw);
 
     static cv::Mat GetDeltaTransformFromOdometer(const cv::Vec3d &Pose1, const cv::Vec3d &Pose2);
+    static cv::Mat GetTbi2bi1FromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2);
+    static cv::Mat GetTci1ci2FromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2);
+    static cv::Point3f BirdPixel2BaseXY(const cv::KeyPoint &keypoint);
+    static cv::Point3f BirdPixel2BaseXY(const cv::Point2f &point);
+    static cv::Point2f BaseXY2BirdPixel(const cv::Point3f &point);
+    static cv::Point3f BaseXY2CamXYZ(cv::Point3f point);
 };
 
 }// namespace ORB_SLAM

@@ -703,16 +703,23 @@ void KeyFrame::AddMapPointBird(MapPointBird* pMP, const size_t &idx)
     mvpMapPointsBird[idx] = pMP;
 }
 
-void KeyFrame::EraseMapPointMatchBird(MapPointBird* pMPBird)
+void KeyFrame::EraseMapPointBirdMatch(MapPointBird* pMPBird)
 {
     int idx = pMPBird->GetIndexInKeyFrame(this);
     if(idx>=0)
         mvpMapPointsBird[idx]=static_cast<MapPointBird*>(NULL);
 }
 
-vector<MapPointBird*> KeyFrame::GetMapPointMatchesBird()
+vector<MapPointBird*> KeyFrame::GetMapPointBirdMatches()
 {
     unique_lock<mutex> lock(mMutexFeatures);
     return mvpMapPointsBird;
 }
+
+MapPointBird* KeyFrame::GetMapPointBird(const size_t &idx)
+{
+    unique_lock<mutex> lock(mMutexFeatures);
+    return mvpMapPointsBird[idx];
+}
+
 } //namespace ORB_SLAM

@@ -44,6 +44,8 @@ public:
                                        const unsigned long nLoopKF=0, const bool bRobust = true);
     void static LocalBundleAdjustment(KeyFrame* pKF, bool *pbStopFlag, Map *pMap);
     int static PoseOptimization(Frame* pFrame);
+    int static PoseOptimizationWithBird(Frame* pFrame, float wB=1.0, float wF=1.0);
+    int static BirdOptimization(Frame* pFrame, float wB=1);
 
     // if bFixScale is true, 6DoF optimization (stereo,rgbd), 7DoF otherwise (mono)
     void static OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* pCurKF,
@@ -60,6 +62,13 @@ public:
     void static BundleAdjustmentWithBirdview(const std::vector<KeyFrame*> &vpKF, const std::vector<MapPoint*> &vpMP,
                             const std::vector<MapPointBird*> &vpMPBird, int nIterations = 5, bool *pbStopFlag=NULL, 
                             const unsigned long nLoopKF=0, const bool bRobust = true, const double wPC = 1e3);
+    void static GlobalBundleAdjustemntWithOdom(Map* pMap, int nIterations=5, bool *pbStopFlag=NULL,
+                                       const unsigned long nLoopKF=0, const bool bRobust = true);
+    void static BundleAdjustmentWithOdom(const std::vector<KeyFrame*> &vpKF, const std::vector<MapPoint*> &vpMP, const vector<MapPointBird *> &vpMPB,
+                                 int nIterations = 5, bool *pbStopFlag=NULL, const unsigned long nLoopKF=0,
+                                 const bool bRobust = true, const float wF = 1.0, const float wB = 1.0, const float wP = 3.0);
+    void static LocalBundleAdjustmentWithOdom(KeyFrame* pKF, bool *pbStopFlag, Map *pMap, const float wF = 1.0, const float wB = 1.0, const float wP = 3.0);
+
     void static GlobalBundleAdjustemntWithBirdview(Map* pMap, int nIterations=5, bool *pbStopFlag=NULL,
                                        const unsigned long nLoopKF=0, const bool bRobust = true);
     void static LocalBundleAdjustmentWithPoseGraph(KeyFrame* pKF, bool *pbStopFlag, Map *pMap, double wPC = 1e3);

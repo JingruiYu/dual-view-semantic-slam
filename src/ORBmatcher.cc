@@ -2586,4 +2586,146 @@ int ORBmatcher::SearchByMatchBird(KeyFrame *pKF, Frame &F, std::vector<MapPointB
 
 
 
+
+int ORBmatcher::BirdMapPointMatch(Frame &CurF, const std::vector<MapPointBird*> &vRefMapPointsBird, int windowSize, float filterSize)
+{    
+    int nmatches = 0;
+
+    vector<int> rotHist[HISTO_LENGTH];
+    for(int i=0;i<HISTO_LENGTH;i++)
+        rotHist[i].reserve(500);
+    const float factor = 1.0f/HISTO_LENGTH;
+
+    vector<int> vnMatches21(CurF.mvKeysBird.size(),-1);
+    vector<int> vnMatches12(vRefMapPointsBird.size(),-1);
+    vector<int> vMatchedDistance(vRefMapPointsBird.size(),INT_MAX);
+
+
+    cv::Mat Tbw;
+    if (CurF.mTcw.empty())
+    {
+        cout << "CurF.mTcw.empty() is true. getchar" << endl;
+        getchar();
+    }
+    else
+        Tbw = Frame::Tbc*CurF.mTcw;
+
+     
+    int numMP = 0;
+    for (size_t i1 = 0; i1 < vRefMapPointsBird.size(); i1++)
+    {       
+        MapPointBird* pMPBird = vRefMapPointsBird[i1];
+        
+        vector<size_t> vIndices2;
+
+        if (!pMPBird)
+            continue;
+        
+        numMP++;
+
+        cv::Mat worldPos = pMPBird->GetWorldPos();
+        cv::Mat localPos = Tbw.rowRange(0,3).colRange(0,3)*worldPos+Tbw.rowRange(0,3).col(3);
+
+        if(fabs(localPos.at<float>(2))>0.2)
+            continue;
+        
+        cv::Point2f pt = Converter::BaseXY2BirdPixel(cv::Point3f(localPos.at<float>(0),localPos.at<float>(1),localPos.at<float>(2)));
+
+        if(pt.x<0||pt.x>=Frame::birdviewCols||pt.y<0||pt.y>=Frame::birdviewRows)
+            continue;
+
+        vIndices2 = CurF.GetFeaturesInAreaBirdview(pt.x, pt.y, windowSize);
+       
+        if (vIndices2.empty())
+            continue;
+        
+        cv::Mat d1;
+        d1 = pMPBird->GetDescriptor();
+        if (d1.empty())
+        {
+            cout << "d1.empty() is true. getchar" << endl;
+            getchar();
+        }
+        
+        int bestDist = INT_MAX;
+        int bestDist2 = INT_MAX;
+        int bestIdx = -1;
+ 
+        for (vector<size_t>::iterator vit=vIndices2.begin(); vit!=vIndices2.end(); vit++)
+        {
+            size_t i2 = *vit;
+
+            if (i2 >= CurF.mDescriptorsBird.rows)
+                continue;
+            
+            cv::Mat d2 = CurF.mDescriptorsBird.row(i2);
+
+            int dist = DescriptorDistance(d1,d2);
+
+            if (dist < bestDist)
+            {
+                bestDist2=bestDist;
+                bestDist=dist;
+                bestIdx=i2;
+            }
+            else if (dist < bestDist2)
+            {
+                bestDist2=dist;
+            }            
+        }
+        
+        if (bestDist<=TH_LOW)
+        {
+            if (bestDist<(float)bestDist2*mfNNratio)
+            {
+                vnMatches21[bestIdx]=i1;
+                vnMatches12[i1]=bestIdx;
+                vMatchedDistance[i1]=bestDist;
+                nmatches++;
+            }
+        }
+    }
+
+    // cout << " Number of Bird Map Points : " << numMP << endl;
+    // cout << " BirdMapPoints Matches :" << nmatches << endl;
+
+    int InlierMatches = 0;
+    cv::Mat Tcw2 = CurF.mTcw;
+    double minDis = INT_MAX;
+    double maxDis = INT_MIN;
+    for (size_t i1 = 0; i1 < vnMatches12.size(); i1++)
+    {
+        if (vnMatches12[i1] > 0)
+        {
+            MapPointBird * pMPBird = vRefMapPointsBird[i1];
+            
+            if (!pMPBird)
+                continue;
+            
+            cv::Mat ptwC = pMPBird->GetWorldPos();
+            cv::Mat ptc2c = Tcw2.rowRange(0,3).colRange(0,3) * ptwC + Tcw2.rowRange(0,3).col(3);
+            cv::Mat pt2c(CurF.mvKeysBirdCamXYZ[vnMatches12[i1]]);
+            double disC = cv::norm(ptc2c-pt2c,cv::NORM_L2);
+
+            if (disC < minDis)
+                minDis = disC;
+            
+            if (disC > maxDis)
+                maxDis = disC;
+            
+            if (disC < filterSize)
+            {
+                CurF.mvpMapPointsBird[vnMatches12[i1]] = pMPBird;
+                InlierMatches++;
+            }
+        }
+    }
+
+    // cout << "Map pt matches : minDis : " << minDis << endl;
+    // cout << "Map pt matches : maxDis : " << maxDis << endl;
+    // cout << "InlierMatches :" << InlierMatches << endl;
+    
+    return InlierMatches;
+}
+
 } //namespace ORB_SLAM

@@ -1171,4 +1171,88 @@ cv::Mat Frame::GetOdomPoseTwb()
     return Twb.clone();
 }
 
+
+cv::Mat Frame::GetTransformFromOdometer(const cv::Vec3d &odomPose1, const cv::Vec3d &odomPose2)
+{
+    const double x1 = odomPose1[0];
+    const double y1 = odomPose1[1];
+    const double theta1 = odomPose1[2];
+    const double x2 = odomPose2[0];
+    const double y2 = odomPose2[1];
+    const double theta2 = odomPose2[2];
+
+    const double theta12 = theta2 - theta1;
+    const double x12 = (x2 - x1) * cos(theta1) + (y2 - y1) * sin(theta1);
+    const double y12 = (y2 - y1) * cos(theta1) - (x2 - x1) * sin(theta1);
+
+    cv::Mat T12b = (cv::Mat_<float>(4,4) << cos(theta12), -sin(theta12), 0, x12,
+                                             sin(theta12),  cos(theta12), 0, y12,
+                                             0,             0,            1, 0,
+                                             0,             0,            0, 1);
+    return (Tcb * T12b * Tbc).clone();
+}
+
+int Frame::GetBirdMapPointsNum()
+{
+    int count = 0;
+    for (size_t index = 0; index < mvpMapPointsBird.size(); ++index)
+    {
+        if (mvpMapPointsBird[index])
+            ++count;
+    }
+    return count;
+}
+
+void Frame::GuidenceKeyBirdPts(std::vector<cv::KeyPoint>& preKeysBird)
+{
+    genEdgesPC();
+    for (size_t index = 0; index < preKeysBird.size(); ++index)
+    {
+        const cv::KeyPoint keypoint = preKeysBird[index];
+        if (nearEdges(keypoint))
+            mvKeysBird.push_back(keypoint);
+    }
+}
+
+void Frame::genEdgesPC()
+{
+    for (int row = 0; row < mBirdviewContourICP.rows; ++row)
+    {
+        for (int col = 0; col < mBirdviewContourICP.cols; ++col)
+        {
+            const uchar value = mBirdviewContourICP.at<uchar>(row, col);
+            if (value < 10)
+                continue;
+
+            cv::Point2f point;
+            point.x = col;
+            point.y = row;
+
+            if (value < 150)
+                mEdgeSign.push_back(point);
+            else
+                mEdgeFree.push_back(point);
+        }
+    }
+}
+
+bool Frame::nearEdges(cv::KeyPoint keypoint)
+{
+    const int radius = 10;
+    const int minX = std::max(0, static_cast<int>(keypoint.pt.x) - radius);
+    const int minY = std::max(0, static_cast<int>(keypoint.pt.y) - radius);
+    const int maxX = std::min(mBirdviewContourICP.cols, static_cast<int>(keypoint.pt.x) + radius);
+    const int maxY = std::min(mBirdviewContourICP.rows, static_cast<int>(keypoint.pt.y) + radius);
+
+    for (int col = minX; col < maxX; ++col)
+    {
+        for (int row = minY; row < maxY; ++row)
+        {
+            if (mBirdviewContourICP.at<uchar>(row, col) >= 10)
+                return true;
+        }
+    }
+    return false;
+}
+
 } //namespace ORB_SLAM
